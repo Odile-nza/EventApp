@@ -1,18 +1,29 @@
 from datetime import date, datetime
-from django.shortcuts import render
+import json
+from django.http import HttpResponse
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import generics
-from .serializers import EventSerializer, OrganizerSerialier, RatedateSerializer
-from .models import Event, Organizer, Ratedate
+from .serializers import EventSerializer, OrganizerSerialier
+from .models import Event, Organizer
 from rest_framework import status
+from rest_framework.views import exception_handler
+from django.forms.models import model_to_dict
 
+@api_view(['POST'])
+def ApiHome(request,*args, **kwargs):
+    data = request.data
+    instance = Event.objects.all().order_by("?").first()
+    data = {}
+    if instance:
+        data = EventSerializer(instance).data
+    return Response(data)
 
 
 
 @api_view(['GET'])
-def AllOrganizers(request):
+def AllOrganizers(exc,request):
     organizers = Organizer.objects.all()
     serializer = OrganizerSerialier (organizers, many=True)
     return Response(serializer.data)
@@ -99,4 +110,5 @@ def RateEvent(request):
     serializer = EventSerializer(events, many=True)
 
     return Response(serializer.data)
-   
+
+    

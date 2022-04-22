@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+ path('', views.ApiHome, name='Api-Home'),
 
  path('organizers-list/', views.AllOrganizers, name='organizers-list'),
  path('organizer-detail/<int:pk>/', views.ViewOrganizer, name='organizer-detail'),

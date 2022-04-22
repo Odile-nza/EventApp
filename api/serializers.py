@@ -1,6 +1,7 @@
 from dataclasses import field, fields
 from rest_framework import serializers
-from .models import Event, Organizer, Ratedate
+from .models import Event, Organizer
+
 
 class OrganizerSerialier(serializers.ModelSerializer):
     class Meta:
@@ -23,13 +24,7 @@ class EventSerializer (serializers.ModelSerializer):
             'end_date_time',
             'location',
             'organizers',
+            'status',
         )
 
-class RatedateSerializer (serializers.ModelSerializer):
-    class Meta:
-        model = Ratedate
-        fields = (
-            'pk',
-            'date_gte',
-            'date_lte',
-        )
+           

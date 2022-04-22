@@ -1,7 +1,10 @@
 from django.contrib import admin
-from .models import Event, Organizer, Ratedate
+from .models import Event, Organizer
 
-admin.site.register(Event)
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('pk','title', 'start_date_time','end_date_time','location','status',)
+    list_filter = ('title',)
+
+admin.site.register(Event, EventAdmin)
 admin.site.register(Organizer)
-admin.site.register(Ratedate)
 
