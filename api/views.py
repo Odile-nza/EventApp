@@ -1,10 +1,11 @@
+from datetime import date, datetime
 from django.shortcuts import render
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import generics
-from .serializers import EventSerializer, OrganizerSerialier
-from .models import Event, Organizer
+from .serializers import EventSerializer, OrganizerSerialier, RatedateSerializer
+from .models import Event, Organizer, Ratedate
 from rest_framework import status
 
 
@@ -47,7 +48,7 @@ def UpdateOrganiser(request,pk):
 def DeleteOrganizer(request,pk):
     organizer = Organizer.objects.get(id=pk)
     if organizer.delete():
-       return Response(status=status.HTTP_202_ACCEPTED)
+       return Response({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -93,10 +94,9 @@ def DeleteEvent(request,pk):
 
 @api_view(['GET'])
 def RateEvent(request):
-    queryset = Event.objects.all()
-    serializer = EventSerializer
-    name = 'event-rateDate'
-      
-    filter_fields = (
-        'start_date_time',
-    )
+    events = Event.objects.filter(start_date_time__gte=datetime(2022,4,1),
+                                  end_date_time__lte=datetime(2022,4,30))
+    serializer = EventSerializer(events, many=True)
+
+    return Response(serializer.data)
+   

@@ -15,6 +15,7 @@ urlpatterns = [
  path('event-create/', views.CreateEvent, name='event-create'),
  path('event-update/<int:pk>/', views.UpdateEvent, name='event-update'),
  path('event-delete/<int:pk>/', views.DeleteEvent, name='event-delete'),
- path('event-rateDate/<str:start_date_time>/', views.RateEvent, name='event-rateDate'),
+
+ path('event-rateDate/', views.RateEvent, name='event-rateDate'),
  
 ]
