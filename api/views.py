@@ -1,42 +1,29 @@
-from datetime import date, datetime
-import json
+from datetime import datetime
+from django.http import Http404
 from django.http import HttpResponse
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import generics
-from .serializers import EventSerializer, OrganizerSerialier
+from .serializers import EventSerializer, OrganizerSerializer
 from .models import Event, Organizer
 from rest_framework import status
-from rest_framework.views import exception_handler
-from django.forms.models import model_to_dict
-
-@api_view(['POST'])
-def ApiHome(request,*args, **kwargs):
-    data = request.data
-    instance = Event.objects.all().order_by("?").first()
-    data = {}
-    if instance:
-        data = EventSerializer(instance).data
-    return Response(data)
-
 
 
 @api_view(['GET'])
-def AllOrganizers(exc,request):
+def AllOrganizers(request):
     organizers = Organizer.objects.all()
-    serializer = OrganizerSerialier (organizers, many=True)
+    serializer = OrganizerSerializer(organizers, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 def ViewOrganizer(request,pk):
     organizer = Organizer.objects.get(id=pk)
-    serializer = OrganizerSerialier(organizer, many=False)
+    serializer = OrganizerSerializer(organizer, many=False)
     return Response(serializer.data)
 
 @api_view(['POST'])
 def CreateOrganizer(request):
-    serializer = OrganizerSerialier(data=request.data)
+    serializer = OrganizerSerializer(data=request.data)
     if Organizer.objects.filter(**request.data).exists():
       raise serializers.ValidationError('This organizer already exists')
     if serializer.is_valid():
@@ -45,21 +32,21 @@ def CreateOrganizer(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def UpdateOrganiser(request,pk):
     organizer = Organizer.objects.get(id=pk)
-    serializer = OrganizerSerialier(instance=organizer, data=request.data)
+    serializer = OrganizerSerializer(instance=organizer, data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
+@api_view(['DELETE'])
 def DeleteOrganizer(request,pk):
     organizer = Organizer.objects.get(id=pk)
     if organizer.delete():
-       return Response({'message': 'Tutorial was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
+       return Response({'message': 'Organizer was deleted successfully!'}, status=status.HTTP_204_NO_CONTENT)
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -72,9 +59,12 @@ def AllEvents(request):
 
 @api_view(['GET'])
 def ViewEvent(request,pk):
-    event = Event.objects.get(id=pk)
-    serializer = EventSerializer(event, many=False)
-    return Response(serializer.data)
+    try:
+        event = Event.objects.get(id=pk)
+        serializer = EventSerializer(event, many=False)
+        return Response(serializer.data)
+    except Event.DoesNotExist:
+        raise Http404("Given event not found")
 
 @api_view(['POST'])
 def CreateEvent(request):
@@ -87,28 +77,45 @@ def CreateEvent(request):
     else:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def UpdateEvent(request,pk):
     event = Event.objects.get(id=pk)
     serializer = EventSerializer(instance=event, data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data,status=status.HTTP_202_ACCEPTED)
     else:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Event  was not updated'},status=status.HTTP_404_NOT_FOUND)
 
-@api_view(['GET'])
+@api_view(['DELETE'])
 def DeleteEvent(request,pk):
     event = Event.objects.get(id=pk)
     event.delete()
-    return Response(status=status.HTTP_202_ACCEPTED)
+    return Response({'message': 'Event was deleted successfully!'}, status=status.HTTP_202_ACCEPTED)
+
 
 @api_view(['GET'])
 def RateEvent(request):
-    events = Event.objects.filter(start_date_time__gte=datetime(2022,4,1),
-                                  end_date_time__lte=datetime(2022,4,30))
-    serializer = EventSerializer(events, many=True)
+    try:
+        events = Event.objects.filter(start_date_time__gte=datetime(2022,5,1),
+                                      end_date_time__lte=datetime(2022,5,30))
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data)
+    except Event.DoesNotExist:
+        raise Http404("Given range not found")
+    
 
-    return Response(serializer.data)
+@api_view(['GET'])
+def CloseEvent(request,pk):
+    try:
+        event = Event.objects.get(id=pk)
+        event.status = "CLOSED"
+        event.save()
+        return Response(data={'message':"status changed successfully"},status=status.HTTP_202_ACCEPTED)
+    except Event.DoesNotExist:
+        raise Http404("Given event not found")
+        
+
+    
 
     

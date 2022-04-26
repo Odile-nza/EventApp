@@ -3,7 +3,6 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
- path('', views.ApiHome, name='Api-Home'),
 
  path('organizers-list/', views.AllOrganizers, name='organizers-list'),
  path('organizer-detail/<int:pk>/', views.ViewOrganizer, name='organizer-detail'),
@@ -17,6 +16,7 @@ urlpatterns = [
  path('event-update/<int:pk>/', views.UpdateEvent, name='event-update'),
  path('event-delete/<int:pk>/', views.DeleteEvent, name='event-delete'),
 
- path('event-rateDate/', views.RateEvent, name='event-rateDate'),
+ path('event-rangeDate/', views.RateEvent, name='event-rangeDate'),
+ path('event-close/<int:pk>/',views.CloseEvent, name='event-close'),
  
 ]

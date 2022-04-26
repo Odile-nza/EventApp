@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Event, Organizer
 
 
-class OrganizerSerialier(serializers.ModelSerializer):
+class OrganizerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organizer
         fields = (
