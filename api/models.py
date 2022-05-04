@@ -30,9 +30,5 @@ class OrganizersOfEvent(models.Model):
     event = models.ForeignKey(Event,null=True, blank=True, on_delete=models.CASCADE)
 
 
+
     
-    
-# class SafeDelete(Event):
-#     isDeleted: models.DateTimeField(null= False, default= False)
-#     class Meta:
-#      abstract = True

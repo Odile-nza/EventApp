@@ -123,7 +123,7 @@ def SetOrganizersEvent(request,pk):
             evog.organizer=org_obj
             evog.event=event_obj
             evog.save()
-            return Response({'message': 'Organizer was assigned successfully!'}, status=status.HTTP_202_ACCEPTED)
+        return Response({'message': 'Organizer was assigned successfully!'}, status=status.HTTP_202_ACCEPTED)
 
     except Event.DoesNotExist:
         raise Http404("Given event not found")
