@@ -1,6 +1,6 @@
 from dataclasses import field, fields
 from rest_framework import serializers
-from .models import Event, Organizer
+from .models import Event, Organizer, OrganizersOfEvent
 
 
 class OrganizerSerializer(serializers.ModelSerializer):
@@ -14,7 +14,6 @@ class OrganizerSerializer(serializers.ModelSerializer):
         )
 
 class EventSerializer (serializers.ModelSerializer):
-    organizers = serializers.PrimaryKeyRelatedField( many=True, read_only=True)
     class Meta:
         model = Event
         fields = (
@@ -23,7 +22,6 @@ class EventSerializer (serializers.ModelSerializer):
             'start_date_time',
             'end_date_time',
             'location',
-            'organizers',
             'status',
         )
 
@@ -36,16 +34,16 @@ class EventUpdateSerializer (serializers.ModelSerializer):
             'start_date_time',
             'end_date_time',
             'location',
-            'organizers',
             'status',
         )
 
 class OrganizersOfEventSerializer (serializers.ModelSerializer):
-    event = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    organizer = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
+        model = OrganizersOfEvent
         fields = (
-            'event',
-            'organizers',
+            'organizer',
         )
 
-           
+class  AssignOrgnizerSerializer(serializers.Serializer):
+    organizer=serializers.CharField()       

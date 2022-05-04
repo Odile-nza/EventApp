@@ -14,25 +14,23 @@ class Organizer(models.Model):
 
 class Event(models.Model):
     OPEN = 'OPEN'
-    CLOSED = 'CLOSED'
-    DATE_STATUS_CHOICES = (
-        (OPEN, _('Open')),
-        (CLOSED, _('Closed')),
-    )
-
     title = models.CharField(max_length=200)
     code = models.CharField(max_length=5)
     start_date_time = models.DateTimeField(default=_timezone.now)
     end_date_time = models.DateTimeField(default=_timezone.now)
     location = models.CharField(max_length=500)
-    organizers = models.ManyToManyField(Organizer, blank=True)
-    status = models.CharField(max_length=10, blank=False,choices=DATE_STATUS_CHOICES, default=OPEN)
+    status = models.CharField(max_length=10, blank=False, default=OPEN)
+    isDeleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
 
 class OrganizersOfEvent(models.Model):
-    organizers = models.CharField(max_length=5)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    organizer = models.ForeignKey(Organizer,null=True, blank=True, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event,null=True, blank=True, on_delete=models.CASCADE)
     
     
+# class SafeDelete(Event):
+#     isDeleted: models.DateTimeField(null= False, default= False)
+#     class Meta:
+#      abstract = True

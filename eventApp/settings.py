@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'eventapp',
         'USER': 'root',
         'PASSWORD':'',
-        'HOST':'127.0.0.1',
+        'HOST':'localhost',
         'PORT':'3306',
     }
 }

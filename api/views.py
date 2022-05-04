@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import List
 from django.http import Http404
 from django.http import HttpResponse
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import EventSerializer, OrganizerSerializer, EventUpdateSerializer, OrganizersOfEventSerializer
-from .models import Event, Organizer
+from .models import Event, Organizer, OrganizersOfEvent
 from rest_framework import status
 
 
@@ -53,7 +54,8 @@ def DeleteOrganizer(request,pk):
 
 @api_view(['GET'])
 def AllEvents(request):
-    events = Event.objects.all()
+    #events = Event.objects.all()
+    events = Event.objects.filter(isDeleted=False)
     serializer = EventSerializer(events, many=True)
     return Response(serializer.data)
 
@@ -90,7 +92,15 @@ def UpdateEvent(request,pk):
 @api_view(['DELETE'])
 def DeleteEvent(request,pk):
     event = Event.objects.get(code=pk)
-    event.delete()
+    event.isDeleted = True
+    event.save()
+    return Response({'message': 'Event was deleted successfully!'}, status=status.HTTP_202_ACCEPTED)
+
+@api_view(['DELETE'])
+def RestoreEvent(request,pk):
+    event = Event.objects.get(code=pk)
+    event.isDeleted = False
+    event.save()
     return Response({'message': 'Event was deleted successfully!'}, status=status.HTTP_202_ACCEPTED)
 
 
@@ -124,17 +134,26 @@ def AllOrganizersEvent(request,pk):
 
 @api_view(['POST'])
 def SetOrganizersEvent(request,pk):
-    event = Event.objects.get(code=pk)
-    serializer = OrganizersOfEventSerializer(data=request.data)
-    organizer = request.data['organizers']
-    for org in list:
-        org = organizer.byid(org)
-        eventOrg = org()
-        eventOrg.Event = event
-        return Response(serializer.data)
+    try:
+        event_obj = Event.objects.get(id=pk)
+        eventOrganizer = request.data["organizer"]
+        for org in eventOrganizer:
+            print (org)
+            org_obj = Organizer.objects.get(org_id=org)
+            evog=OrganizersOfEvent()
+            evog.organizer=org_obj
+            evog.event=event_obj
+            evog.save()
+            return Response({'message': 'Organizer was assigned successfully!'}, status=status.HTTP_202_ACCEPTED)
 
-    
+    except Event.DoesNotExist:
+        raise Http404("Given event not found")
 
-    
-
-    
+@api_view(['POST'])
+def openOrCloseEvent(request,pk):
+        event = Event.objects.get(code=pk)
+        openOrClose = request.data["status"]
+        print(openOrClose)
+        event.status= openOrClose
+        event.save()
+        return Response({'message': 'Status changed successfully!'}, status=status.HTTP_202_ACCEPTED)
