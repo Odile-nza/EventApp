@@ -1,4 +1,5 @@
 from datetime import datetime
+import datetime as dt
 from typing import List
 from django.http import Http404
 from django.http import HttpResponse
@@ -101,29 +102,7 @@ def RestoreEvent(request,pk):
     event = Event.objects.get(code=pk)
     event.isDeleted = False
     event.save()
-    return Response({'message': 'Event was deleted successfully!'}, status=status.HTTP_202_ACCEPTED)
-
-
-@api_view(['GET'])
-def RateEvent(request):
-    try:
-        events = Event.objects.filter(start_date_time__gte=datetime(2022,5,1),
-                                      end_date_time__lte=datetime(2022,5,30))
-        serializer = EventSerializer(events, many=True)
-        return Response(serializer.data)
-    except Event.DoesNotExist:
-        raise Http404("Given range not found")
-    
-
-@api_view(['GET'])
-def CloseEvent(request,pk):
-    try:
-        event = Event.objects.get(code=pk)
-        event.status = "CLOSED"
-        event.save()
-        return Response(data={'message':"status changed successfully"},status=status.HTTP_202_ACCEPTED)
-    except Event.DoesNotExist:
-        raise Http404("Given event not found")
+    return Response({'message': 'Event was restored successfully!'}, status=status.HTTP_202_ACCEPTED)
 
 @api_view(['GET'])
 def AllOrganizersEvent(request,pk):
@@ -157,3 +136,13 @@ def openOrCloseEvent(request,pk):
         event.status= openOrClose
         event.save()
         return Response({'message': 'Status changed successfully!'}, status=status.HTTP_202_ACCEPTED)
+
+@api_view(['GET'])
+def RangeEvent(request):
+    try:
+        events = Event.objects.filter(start_date_time__gte=dt.datetime.strptime(request.data["startDate"],"%Y-%m-%d").date(),
+                                      end_date_time__lte=dt.datetime.strptime(request.data["endDate"],"%Y-%m-%d").date())
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data)
+    except Event.DoesNotExist:
+        raise Http404()

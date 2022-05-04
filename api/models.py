@@ -28,6 +28,8 @@ class Event(models.Model):
 class OrganizersOfEvent(models.Model):
     organizer = models.ForeignKey(Organizer,null=True, blank=True, on_delete=models.CASCADE)
     event = models.ForeignKey(Event,null=True, blank=True, on_delete=models.CASCADE)
+
+
     
     
 # class SafeDelete(Event):
