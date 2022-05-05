@@ -11,6 +11,7 @@ urlpatterns = [
  path('organizer-delete/<int:pk>/', views.DeleteOrganizer, name='organizer-delete'),
 
  path('events-list/', views.AllEvents, name='events-list'),
+ path('OpenEvents-list/', views.OpenEvents, name='OpenEvents-list'),
  path('event-detail/<str:pk>/', views.ViewEvent, name='event-detail'),
  path('event-create/', views.CreateEvent, name='event-create'),
  path('event-update/<str:pk>/', views.UpdateEvent, name='event-update'),
@@ -19,6 +20,6 @@ urlpatterns = [
 
  path('events-rangeDate/', views.RangeEvent, name='events-rangeDate'),
  path('event-openOrClose/<str:pk>/',views.openOrCloseEvent, name='event-openOrClose'),
- path('event-organizers/<str:pk>/',views. AllOrganizersEvent, name='event-organizers'),
+ path('event-organizers/<int:pk>/',views. AllOrganizersEvent, name='event-organizers'),
  path('event-setOrganizers/<int:pk>/',views. SetOrganizersEvent, name='event-setOrganizers'),
 ]

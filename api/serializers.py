@@ -26,7 +26,6 @@ class EventSerializer (serializers.ModelSerializer):
         )
 
 class EventUpdateSerializer (serializers.ModelSerializer):
-    organizers = serializers.PrimaryKeyRelatedField( many=True, read_only=True)
     class Meta:
         model = Event
         fields = (

@@ -104,12 +104,6 @@ def RestoreEvent(request,pk):
     event.save()
     return Response({'message': 'Event was restored successfully!'}, status=status.HTTP_202_ACCEPTED)
 
-@api_view(['GET'])
-def AllOrganizersEvent(request,pk):
-    event = Event.objects.get(code=pk)
-    organizers = event.organizers.all()
-    serializer = OrganizerSerializer(organizers, many=True)
-    return Response(serializer.data)
 
 @api_view(['POST'])
 def SetOrganizersEvent(request,pk):
@@ -126,7 +120,16 @@ def SetOrganizersEvent(request,pk):
         return Response({'message': 'Organizer was assigned successfully!'}, status=status.HTTP_202_ACCEPTED)
 
     except Event.DoesNotExist:
-        raise Http404("Given event not found")
+        raise Http404()
+
+@api_view(['GET'])
+def AllOrganizersEvent(request,pk):
+    try:
+        event = OrganizersOfEvent.objects.get(event_id=pk)
+        serializer = OrganizersOfEventSerializer(event, many=True)
+        return Response(serializer.data)
+    except Event.DoesNotExist:
+     raise Http404()
 
 @api_view(['POST'])
 def openOrCloseEvent(request,pk):
@@ -146,3 +149,9 @@ def RangeEvent(request):
         return Response(serializer.data)
     except Event.DoesNotExist:
         raise Http404()
+
+@api_view(['GET'])
+def OpenEvents(request):
+    events = Event.objects.filter(isDeleted=False,status='OPEN')
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
