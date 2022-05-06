@@ -123,13 +123,14 @@ def SetOrganizersEvent(request,pk):
         raise Http404()
 
 @api_view(['GET'])
-def AllOrganizersEvent(request,pk):
-    try:
-        event = OrganizersOfEvent.objects.get(event_id=pk)
-        serializer = OrganizersOfEventSerializer(event, many=True)
-        return Response(serializer.data)
-    except Event.DoesNotExist:
-     raise Http404()
+def EventOrgnizers(request,pk):
+    event = Event.objects.get(id=pk)
+    eventOrg = OrganizersOfEvent.objects.filter(event=event)
+    listOfOrg = []
+    for ev in eventOrg:
+        listOfOrg.append(ev.organizer)
+        serializer = OrganizerSerializer(listOfOrg, many=True)
+    return Response(serializer.data)
 
 @api_view(['POST'])
 def openOrCloseEvent(request,pk):

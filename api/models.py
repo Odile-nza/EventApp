@@ -30,5 +30,4 @@ class OrganizersOfEvent(models.Model):
     event = models.ForeignKey(Event,null=True, blank=True, on_delete=models.CASCADE)
 
 
-
     

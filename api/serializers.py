@@ -43,4 +43,4 @@ class OrganizersOfEventSerializer (serializers.ModelSerializer):
         fields = (
             'organizer',
         )
-    
+

@@ -20,6 +20,6 @@ urlpatterns = [
 
  path('events-rangeDate/', views.RangeEvent, name='events-rangeDate'),
  path('event-openOrClose/<str:pk>/',views.openOrCloseEvent, name='event-openOrClose'),
- path('event-organizers/<int:pk>/',views. AllOrganizersEvent, name='event-organizers'),
  path('event-setOrganizers/<int:pk>/',views. SetOrganizersEvent, name='event-setOrganizers'),
+ path('event-getOrganizers/<int:pk>/',views. EventOrgnizers, name='event-getOrganizers'),
 ]
